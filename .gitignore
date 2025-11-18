@@ -1,0 +1,2 @@
+# don't track built binary
+/tflint-ruleset-aws-meta
