@@ -13,8 +13,11 @@ import (
 func GetRegionPattern() *regexp.Regexp {
 	regionList, err := regions.ListAllRegions()
 	if err != nil {
-		// Fallback to empty pattern if we can't load regions
-		return regexp.MustCompile(`^$`)
+		panic(fmt.Sprintf("failed to load AWS regions: %v", err))
+	}
+
+	if len(regionList) == 0 {
+		panic("AWS region list is empty")
 	}
 
 	regionNames := make([]string, 0, len(regionList))
@@ -30,8 +33,11 @@ func GetRegionPattern() *regexp.Regexp {
 func GetRegionInStringPattern() *regexp.Regexp {
 	regionList, err := regions.ListAllRegions()
 	if err != nil {
-		// Fallback to empty pattern if we can't load regions
-		return regexp.MustCompile(`^$`)
+		panic(fmt.Sprintf("failed to load AWS regions: %v", err))
+	}
+
+	if len(regionList) == 0 {
+		panic("AWS region list is empty")
 	}
 
 	regionNames := make([]string, 0, len(regionList))
@@ -47,8 +53,11 @@ func GetRegionInStringPattern() *regexp.Regexp {
 func GetAvailabilityZonePattern() *regexp.Regexp {
 	regionList, err := regions.ListAllRegions()
 	if err != nil {
-		// Fallback to empty pattern if we can't load regions
-		return regexp.MustCompile(`^$`)
+		panic(fmt.Sprintf("failed to load AWS regions: %v", err))
+	}
+
+	if len(regionList) == 0 {
+		panic("AWS region list is empty")
 	}
 
 	regionNames := make([]string, 0, len(regionList))
@@ -56,7 +65,6 @@ func GetAvailabilityZonePattern() *regexp.Regexp {
 		regionNames = append(regionNames, regexp.QuoteMeta(region.RegionId))
 	}
 
-	// AZ pattern: region code + letter (a-z)
 	pattern := fmt.Sprintf("^(%s)[a-z]$", strings.Join(regionNames, "|"))
 	return regexp.MustCompile(pattern)
 }
@@ -65,8 +73,11 @@ func GetAvailabilityZonePattern() *regexp.Regexp {
 func GetARNRegionPattern() *regexp.Regexp {
 	regionList, err := regions.ListAllRegions()
 	if err != nil {
-		// Fallback to empty pattern if we can't load regions
-		return regexp.MustCompile(`^$`)
+		panic(fmt.Sprintf("failed to load AWS regions: %v", err))
+	}
+
+	if len(regionList) == 0 {
+		panic("AWS region list is empty")
 	}
 
 	regionNames := make([]string, 0, len(regionList))
@@ -82,8 +93,11 @@ func GetARNRegionPattern() *regexp.Regexp {
 func GetPartitionPattern() *regexp.Regexp {
 	partitionList, err := partitions.List()
 	if err != nil {
-		// Fallback to empty pattern if we can't load partitions
-		return regexp.MustCompile(`^$`)
+		panic(fmt.Sprintf("failed to load AWS partitions: %v", err))
+	}
+
+	if len(partitionList) == 0 {
+		panic("AWS partition list is empty")
 	}
 
 	partitionNames := make([]string, 0, len(partitionList))
