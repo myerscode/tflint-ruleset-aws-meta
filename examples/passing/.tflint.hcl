@@ -1,4 +1,4 @@
-plugin "aws-multi" {
+plugin "aws-meta" {
   enabled = true
 }
 
@@ -22,6 +22,6 @@ rule "aws_provider_hardcoded_region" {
   enabled = true
 }
 
-rule "aws_hardcoded_region" {
+rule "aws_arn_hardcoded" {
   enabled = true
 }

@@ -25,11 +25,10 @@ variable "aws_region" {
 data "aws_region" "current" {}
 data "aws_partition" "current" {}
 
-# Provider configuration using variable (best practice)
+# Provider configuration without hardcoded region
+# Region should come from environment variables (AWS_DEFAULT_REGION) or AWS profiles
 provider "aws" {
-  region = var.aws_region
-  # Credentials should come from environment variables, IAM roles, or AWS profiles
-  # profile = var.aws_profile  # Alternative: use AWS profile
+  # No region specified - will use environment or profile configuration
 }
 
 # S3 bucket without hardcoded region
@@ -39,13 +38,6 @@ resource "aws_s3_bucket" "example" {
 
 resource "random_id" "bucket_suffix" {
   byte_length = 4
-}
-
-# Instance using data source for availability zone
-resource "aws_instance" "example" {
-  ami               = "ami-12345678"
-  instance_type     = "t2.micro"
-  availability_zone = "${data.aws_region.current.name}a"
 }
 
 # IAM role with dynamic ARN construction
@@ -72,26 +64,32 @@ resource "aws_iam_policy" "example" {
 
 data "aws_caller_identity" "current" {}
 
-# Additional AWS resources using dynamic region references (best practice)
-resource "aws_s3_bucket" "another_example" {
-  bucket = "my-another-bucket-${random_id.bucket_suffix2.hex}"
-  # No hardcoded region - will use provider region
+
+# Lambda permission with dynamic ARN (best practice)
+resource "aws_lambda_permission" "example" {
+  statement_id  = "AllowS3Invoke"
+  action        = "lambda:InvokeFunction"
+  function_name = "my-function"
+  principal     = "s3.amazonaws.com"
+  source_arn    = "arn:${data.aws_partition.current.partition}:s3:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:bucket/my-bucket"
 }
 
-resource "random_id" "bucket_suffix2" {
-  byte_length = 4
+# SNS subscription with dynamic ARN (best practice)
+resource "aws_sns_topic_subscription" "example" {
+  topic_arn = "arn:${data.aws_partition.current.partition}:sns:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:my-topic"
+  protocol  = "email"
+  endpoint  = "example@example.com"
 }
 
-resource "aws_instance" "another_example" {
-  ami           = "ami-87654321"
-  instance_type = "t2.micro"
-  # Using data source for dynamic AZ selection
-  availability_zone = "${data.aws_region.current.name}b"
+# KMS grant with dynamic ARN (best practice)
+resource "aws_kms_grant" "example" {
+  name              = "my-grant"
+  key_id            = "arn:${data.aws_partition.current.partition}:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/12345678-1234-1234-1234-123456789012"
+  grantee_principal = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/my-role"
 }
 
-resource "aws_db_instance" "another_example" {
-  identifier     = "mydb-another"
-  engine         = "mysql"
-  instance_class = "db.t3.micro"
-  # No hardcoded region - will use provider region
+# CloudWatch event target with dynamic ARN (best practice)
+resource "aws_cloudwatch_event_target" "example" {
+  rule = "my-rule"
+  arn  = "arn:${data.aws_partition.current.partition}:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:my-function"
 }
