@@ -17,6 +17,7 @@ func main() {
 				rules.NewAwsIamPolicyHardcodedRegionRule(),
 				rules.NewAwsIamPolicyHardcodedPartitionRule(),
 				rules.NewAwsProviderHardcodedRegionRule(),
+				rules.NewAwsARNHardcodedRule(),
 			},
 		},
 	})
