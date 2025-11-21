@@ -12,12 +12,12 @@ func main() {
 			Name:    "aws-meta",
 			Version: "0.1.0",
 			Rules: []tflint.Rule{
+				rules.NewAwsMetaHardcodedRule(),
 				rules.NewAwsIamRolePolicyHardcodedRegionRule(),
 				rules.NewAwsIamRolePolicyHardcodedPartitionRule(),
 				rules.NewAwsIamPolicyHardcodedRegionRule(),
 				rules.NewAwsIamPolicyHardcodedPartitionRule(),
 				rules.NewAwsProviderHardcodedRegionRule(),
-				rules.NewAwsARNHardcodedRule(),
 			},
 		},
 	})

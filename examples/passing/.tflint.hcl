@@ -22,6 +22,6 @@ rule "aws_provider_hardcoded_region" {
   enabled = true
 }
 
-rule "aws_arn_hardcoded" {
+rule "aws_meta_hardcoded" {
   enabled = true
 }

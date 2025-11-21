@@ -9,39 +9,39 @@ import (
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
-// AwsARNHardcodedRule checks for hardcoded regions and partitions in ARN values
+// AwsMetaHardcodedRule checks for hardcoded regions and partitions in ARN values
 // across all AWS resources by walking all expressions
-type AwsARNHardcodedRule struct {
+type AwsMetaHardcodedRule struct {
 	tflint.DefaultRule
 }
 
-// NewAwsARNHardcodedRule returns a new rule
-func NewAwsARNHardcodedRule() *AwsARNHardcodedRule {
-	return &AwsARNHardcodedRule{}
+// NewAwsMetaHardcodedRule returns a new rule
+func NewAwsMetaHardcodedRule() *AwsMetaHardcodedRule {
+	return &AwsMetaHardcodedRule{}
 }
 
 // Name returns the rule name
-func (r *AwsARNHardcodedRule) Name() string {
-	return "aws_arn_hardcoded"
+func (r *AwsMetaHardcodedRule) Name() string {
+	return "aws_meta_hardcoded"
 }
 
 // Enabled returns whether the rule is enabled by default
-func (r *AwsARNHardcodedRule) Enabled() bool {
+func (r *AwsMetaHardcodedRule) Enabled() bool {
 	return true
 }
 
 // Severity returns the rule severity
-func (r *AwsARNHardcodedRule) Severity() tflint.Severity {
+func (r *AwsMetaHardcodedRule) Severity() tflint.Severity {
 	return tflint.WARNING
 }
 
 // Link returns the rule reference link
-func (r *AwsARNHardcodedRule) Link() string {
+func (r *AwsMetaHardcodedRule) Link() string {
 	return ""
 }
 
 // Check checks for hardcoded regions and partitions in ARN-like string values
-func (r *AwsARNHardcodedRule) Check(runner tflint.Runner) error {
+func (r *AwsMetaHardcodedRule) Check(runner tflint.Runner) error {
 	arnRegionPattern := awsmeta.GetARNRegionPattern()
 	arnPartitionPattern := awsmeta.GetPartitionPattern()
 
