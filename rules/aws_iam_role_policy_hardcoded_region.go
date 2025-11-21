@@ -29,7 +29,7 @@ func (r *AwsIamRolePolicyHardcodedRegionRule) Name() string {
 
 // Enabled returns whether the rule is enabled by default
 func (r *AwsIamRolePolicyHardcodedRegionRule) Enabled() bool {
-	return true
+	return false
 }
 
 // Severity returns the rule severity

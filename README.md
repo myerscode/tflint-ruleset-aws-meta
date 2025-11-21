@@ -30,12 +30,12 @@ plugin "aws-meta" {
 
 |Name|Description|Severity|Enabled|Link|
 | --- | --- | --- | --- | --- |
-|aws_iam_role_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM role policy documents|WARNING|✔|[docs](docs/rules.md#aws_iam_role_policy_hardcoded_region)|
-|aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING|✔|[docs](docs/rules.md#aws_iam_role_policy_hardcoded_partition)|
-|aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING|✔|[docs](docs/rules.md#aws_iam_policy_hardcoded_region)|
-|aws_iam_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM policy documents|WARNING|✔|[docs](docs/rules.md#aws_iam_policy_hardcoded_partition)|
-|aws_provider_hardcoded_region|Validates that there are no hardcoded AWS regions in provider configuration|WARNING|✔|[docs](docs/rules.md#aws_provider_hardcoded_region)|
-|aws_arn_hardcoded|Validates that there are no hardcoded AWS regions or partitions in ARN values across all resource types|WARNING|✔|[docs](docs/rules.md#aws_arn_hardcoded)|
+|aws_meta_hardcoded|Validates that there are no hardcoded AWS regions or partitions in ARN values across all resource types|WARNING|✔|[docs](docs/rules.md#aws_meta_hardcoded)|
+|aws_iam_role_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM role policy documents|WARNING||[docs](docs/rules.md#aws_iam_role_policy_hardcoded_region)|
+|aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING||[docs](docs/rules.md#aws_iam_role_policy_hardcoded_partition)|
+|aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING||[docs](docs/rules.md#aws_iam_policy_hardcoded_region)|
+|aws_iam_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM policy documents|WARNING||[docs](docs/rules.md#aws_iam_policy_hardcoded_partition)|
+|aws_provider_hardcoded_region|Validates that there are no hardcoded AWS regions in provider configuration|WARNING||[docs](docs/rules.md#aws_provider_hardcoded_region)|
 
 For detailed examples and usage information, see the [Rule Details documentation](docs/rules.md).
 

@@ -29,7 +29,7 @@ func (r *AwsIamRolePolicyHardcodedPartitionRule) Name() string {
 
 // Enabled returns whether the rule is enabled by default
 func (r *AwsIamRolePolicyHardcodedPartitionRule) Enabled() bool {
-	return true
+	return false
 }
 
 // Severity returns the rule severity
