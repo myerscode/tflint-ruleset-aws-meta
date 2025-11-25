@@ -18,6 +18,8 @@ func main() {
 				rules.NewAwsIamPolicyHardcodedRegionRule(),
 				rules.NewAwsIamPolicyHardcodedPartitionRule(),
 				rules.NewAwsProviderHardcodedRegionRule(),
+				rules.NewAwsServicePrincipalHardcodedRule(),
+				rules.NewAwsServicePrincipalDNSSuffixRule(),
 			},
 		},
 	})

@@ -14,13 +14,6 @@ terraform {
   }
 }
 
-# Use variables for region configuration
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-  # No default value to avoid hardcoding
-}
-
 # Use data sources to get current region and partition
 data "aws_region" "current" {}
 data "aws_partition" "current" {}
@@ -40,11 +33,25 @@ resource "random_id" "bucket_suffix" {
   byte_length = 4
 }
 
-# IAM role with dynamic ARN construction
+# Get service principal for EC2
+data "aws_service_principal" "ec2_for_role" {
+  service_name = "ec2"
+}
+
+# IAM role with dynamic service principal (best practice)
 resource "aws_iam_role" "example" {
   name = "example-role"
-  
-  assume_role_policy = "{\"Version\": \"2012-10-17\", \"Statement\": [{\"Action\": \"sts:AssumeRole\", \"Effect\": \"Allow\", \"Principal\": {\"Service\": \"ec2.amazonaws.com\"}}]}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = data.aws_service_principal.ec2_for_role.name
+      }
+    }]
+  })
 }
 
 # IAM role policy with dynamic ARNs
@@ -65,12 +72,17 @@ resource "aws_iam_policy" "example" {
 data "aws_caller_identity" "current" {}
 
 
-# Lambda permission with dynamic ARN (best practice)
+# Get service principal for S3 (for Lambda permission)
+data "aws_service_principal" "s3_for_lambda" {
+  service_name = "s3"
+}
+
+# Lambda permission with dynamic ARN and service principal (best practice)
 resource "aws_lambda_permission" "example" {
   statement_id  = "AllowS3Invoke"
   action        = "lambda:InvokeFunction"
   function_name = "my-function"
-  principal     = "s3.amazonaws.com"
+  principal     = data.aws_service_principal.s3_for_lambda.name
   source_arn    = "arn:${data.aws_partition.current.partition}:s3:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:bucket/my-bucket"
 }
 
@@ -84,6 +96,7 @@ resource "aws_sns_topic_subscription" "example" {
 # KMS grant with dynamic ARN (best practice)
 resource "aws_kms_grant" "example" {
   name              = "my-grant"
+  operations        = ["Encrypt", "Decrypt", "GenerateDataKey"]
   key_id            = "arn:${data.aws_partition.current.partition}:kms:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:key/12345678-1234-1234-1234-123456789012"
   grantee_principal = "arn:${data.aws_partition.current.partition}:iam::${data.aws_caller_identity.current.account_id}:role/my-role"
 }
@@ -92,4 +105,57 @@ resource "aws_kms_grant" "example" {
 resource "aws_cloudwatch_event_target" "example" {
   rule = "my-rule"
   arn  = "arn:${data.aws_partition.current.partition}:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:function:my-function"
+}
+
+# Get service principal names dynamically (best practice)
+data "aws_service_principal" "s3" {
+  service_name = "s3"
+}
+
+data "aws_service_principal" "lambda" {
+  service_name = "lambda"
+}
+
+data "aws_service_principal" "ec2" {
+  service_name = "ec2"
+}
+
+data "aws_service_principal" "ecs_tasks" {
+  service_name = "ecs-tasks"
+}
+
+# IAM role with service principal using data source (best practice)
+resource "aws_iam_role" "service_principal_example" {
+  name = "service-principal-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = data.aws_service_principal.s3.name
+      }
+    }]
+  })
+}
+
+# IAM role with multiple service principals using data sources (best practice)
+resource "aws_iam_role" "multi_service_principal" {
+  name = "multi-service-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = [
+          data.aws_service_principal.lambda.name,
+          data.aws_service_principal.ec2.name,
+          data.aws_service_principal.ecs_tasks.name
+        ]
+      }
+    }]
+  })
 }

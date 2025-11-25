@@ -90,3 +90,94 @@ resource "aws_cloudwatch_event_target" "example" {
   rule = "my-rule"
   arn  = "arn:aws-cn:lambda:cn-north-1:123456789012:function:my-function"
 }
+
+# Get partition data
+data "aws_partition" "current" {}
+
+# IAM role with hardcoded service principal DNS suffix (potential future rule)
+resource "aws_iam_role" "service_principal_bad_hardcoded" {
+  name = "service-principal-bad-hardcoded"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "s3.amazonaws.com" # ❌ Hardcoded DNS suffix (should use data.aws_service_principal)
+      }
+    }]
+  })
+}
+
+# IAM role using dns_suffix (not best practice - potential future rule)
+resource "aws_iam_role" "service_principal_bad_dns_suffix" {
+  name = "service-principal-bad-dns-suffix"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "s3.${data.aws_partition.current.dns_suffix}"
+      }
+    }]
+  })
+}
+
+# IAM role with multiple hardcoded service principals (potential future rule)
+resource "aws_iam_role" "multi_service_principal_bad_hardcoded" {
+  name = "multi-service-bad-hardcoded"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = [
+          "lambda.amazonaws.com",
+          "ec2.amazonaws.com",
+          "ecs-tasks.amazonaws.com"
+        ]
+      }
+    }]
+  })
+}
+
+# IAM role with multiple service principals using dns_suffix (not best practice)
+resource "aws_iam_role" "multi_service_principal_bad_dns_suffix" {
+  name = "multi-service-bad-dns-suffix"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = [
+          "lambda.${data.aws_partition.current.dns_suffix}",
+          "ec2.${data.aws_partition.current.dns_suffix}",
+          "ecs-tasks.${data.aws_partition.current.dns_suffix}"
+        ]
+      }
+    }]
+  })
+}
+
+# IAM role with China partition hardcoded (potential future rule)
+resource "aws_iam_role" "china_service_principal_bad" {
+  name = "china-service-bad"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "lambda.amazonaws.com.cn"
+      }
+    }]
+  })
+}

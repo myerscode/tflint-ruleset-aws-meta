@@ -25,3 +25,12 @@ rule "aws_provider_hardcoded_region" {
 rule "aws_meta_hardcoded" {
   enabled = true
 }
+
+
+rule "aws_service_principal_hardcoded" {
+  enabled = true
+}
+
+rule "aws_service_principal_dns_suffix" {
+  enabled = true
+}
