@@ -193,3 +193,166 @@ provider "aws" {
 ```
 
 
+
+
+## aws_service_principal_hardcoded
+
+This rule checks for hardcoded AWS service principal DNS suffixes in IAM policies and roles. Service principal DNS suffixes vary by partition (e.g., `amazonaws.com`, `amazonaws.com.cn`, `amazonaws-us-gov.com`), so hardcoding them prevents multi-partition compatibility.
+
+**This rule is disabled by default** - enable it in your `.tflint.hcl` if you want to enforce this check.
+
+**Example violations:**
+```hcl
+resource "aws_iam_role" "bad" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = "s3.amazonaws.com"  # ❌ Hardcoded DNS suffix
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role" "bad_china" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = "lambda.amazonaws.com.cn"  # ❌ Hardcoded China DNS suffix
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role" "bad_multiple" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = [
+          "lambda.amazonaws.com",      # ❌ Hardcoded
+          "ec2.amazonaws.com",          # ❌ Hardcoded
+          "ecs-tasks.amazonaws.com"     # ❌ Hardcoded
+        ]
+      }
+    }]
+  })
+}
+```
+
+**Recommended fix:**
+```hcl
+data "aws_service_principal" "s3" {
+  service_name = "s3"
+}
+
+resource "aws_iam_role" "good" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = data.aws_service_principal.s3.name  # ✅ Dynamic
+      }
+    }]
+  })
+}
+
+data "aws_service_principal" "lambda" {
+  service_name = "lambda"
+}
+
+data "aws_service_principal" "ec2" {
+  service_name = "ec2"
+}
+
+data "aws_service_principal" "ecs_tasks" {
+  service_name = "ecs-tasks"
+}
+
+resource "aws_iam_role" "good_multiple" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = [
+          data.aws_service_principal.lambda.name,      # ✅ Dynamic
+          data.aws_service_principal.ec2.name,          # ✅ Dynamic
+          data.aws_service_principal.ecs_tasks.name     # ✅ Dynamic
+        ]
+      }
+    }]
+  })
+}
+```
+
+## aws_service_principal_dns_suffix
+
+This rule checks for use of `dns_suffix` in service principal construction. While using `data.aws_partition.current.dns_suffix` is better than hardcoding, the `aws_service_principal` data source is the recommended best practice as it handles all the complexity for you.
+
+**Example violations:**
+```hcl
+data "aws_partition" "current" {}
+
+resource "aws_iam_role" "bad" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = "s3.${data.aws_partition.current.dns_suffix}"  # ❌ Using dns_suffix
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role" "bad_multiple" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = [
+          "lambda.${data.aws_partition.current.dns_suffix}",      # ❌ Using dns_suffix
+          "ec2.${data.aws_partition.current.dns_suffix}",          # ❌ Using dns_suffix
+          "ecs-tasks.${data.aws_partition.current.dns_suffix}"     # ❌ Using dns_suffix
+        ]
+      }
+    }]
+  })
+}
+```
+
+**Recommended fix:**
+```hcl
+data "aws_service_principal" "s3" {
+  service_name = "s3"
+}
+
+resource "aws_iam_role" "good" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = data.aws_service_principal.s3.name  # ✅ Best practice
+      }
+    }]
+  })
+}
+
+data "aws_service_principal" "lambda" {
+  service_name = "lambda"
+}
+
+data "aws_service_principal" "ec2" {
+  service_name = "ec2"
+}
+
+data "aws_service_principal" "ecs_tasks" {
+  service_name = "ecs-tasks"
+}
+
+resource "aws_iam_role" "good_multiple" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = [
+          data.aws_service_principal.lambda.name,      # ✅ Best practice
+          data.aws_service_principal.ec2.name,          # ✅ Best practice
+          data.aws_service_principal.ecs_tasks.name     # ✅ Best practice
+        ]
+      }
+    }]
+  })
+}
+```
