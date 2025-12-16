@@ -2,11 +2,6 @@ name: Deploy GitHub Pages
 
 on:
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: 'Set to "true" to perform deployment. Default "false" runs build only.'
-        required: false
-        default: 'false'
 
 permissions:
   contents: read
