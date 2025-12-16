@@ -1,0 +1,6 @@
+title: tflint-ruleset-aws-meta
+description: Documentation for the tflint ruleset for AWS metadata
+theme: jekyll-theme-cayman
+
+# If you want a baseurl (for project pages at username.github.io/repo), set it here
+# baseurl: "/tflint-ruleset-aws-meta"
