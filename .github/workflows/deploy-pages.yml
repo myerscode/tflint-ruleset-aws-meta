@@ -1,7 +1,10 @@
 name: Deploy GitHub Pages
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - create-doc-site
 
 permissions:
   contents: read
