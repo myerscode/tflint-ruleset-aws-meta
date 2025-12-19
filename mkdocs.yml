@@ -1,5 +1,4 @@
 site_name: tflint-ruleset-aws-meta
-description: Documentation for the tflint ruleset for AWS metadata
 theme:
   name: material
 nav:
