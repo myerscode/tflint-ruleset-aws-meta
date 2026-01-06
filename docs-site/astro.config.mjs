@@ -16,6 +16,8 @@ export default defineConfig({
           label: 'Overview',
           items: [
             { label: 'Introduction', link: '/' },
+            { label: 'Installation', link: '/installation' },
+            { label: 'Contributing', link: '/contributing' },
           ],
         },
         {

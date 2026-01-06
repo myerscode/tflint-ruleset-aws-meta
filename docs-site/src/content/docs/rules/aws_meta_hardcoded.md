@@ -1,7 +1,10 @@
 ---
-title: aws_meta_hardcoded
+title: Hardcoded ARN Values Detection
 description: Checks all AWS resources for hardcoded regions and partitions in ARN values.
+ruleName: aws_meta_hardcoded
 ---
+
+**Rule:** `aws_meta_hardcoded`
 
 This is a comprehensive rule that checks ALL AWS resources for hardcoded regions and partitions in ARN values. It works by walking through all expressions in your Terraform files and detecting any string that looks like an ARN with hardcoded values.
 
@@ -42,5 +45,17 @@ resource "aws_lambda_permission" "test" {
 
 resource "aws_kms_grant" "test" {
   key_id = "arn:${data.aws_partition.current.partition}:kms:${data.aws_region.current.name}:123456789012:key/12345678-1234-1234-1234-123456789012"  # ✅ Dynamic
+}
+```
+
+## Enabling this rule
+
+This rule is **enabled by default** when you install the aws-meta plugin. No additional configuration is needed.
+
+If you want to disable this rule, add it to your `.tflint.hcl`:
+
+```hcl
+rule "aws_meta_hardcoded" {
+  enabled = false
 }
 ```

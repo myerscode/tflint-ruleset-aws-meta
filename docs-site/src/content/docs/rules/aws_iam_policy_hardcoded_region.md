@@ -1,7 +1,10 @@
 ---
-title: aws_iam_policy_hardcoded_region
+title: IAM Policy Hardcoded Regions
 description: Detects hardcoded AWS regions in aws_iam_policy resources.
+ruleName: aws_iam_policy_hardcoded_region
 ---
+
+**Rule:** `aws_iam_policy_hardcoded_region`
 
 This rule checks `aws_iam_policy` resources for hardcoded AWS regions in policy documents. Similar to the role policy rule, it examines:
 
@@ -33,5 +36,15 @@ resource "aws_iam_policy" "good" {
       Resource = "arn:aws:lambda:${data.aws_region.current.name}:123456789012:function:*"  # ✅ Dynamic region
     }]
   })
+}
+```
+
+## Enabling this rule
+
+This rule is **disabled by default**. To enable it, add it to your `.tflint.hcl`:
+
+```hcl
+rule "aws_iam_policy_hardcoded_region" {
+  enabled = true
 }
 ```

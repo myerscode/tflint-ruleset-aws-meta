@@ -1,6 +1,6 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
+title: TFLint AWS Meta Ruleset
+description: A TFLint ruleset for AWS best practices, focusing on preventing hardcoded values and promoting flexible, maintainable Terraform code.
 ---
 
 # TFLint AWS Meta Ruleset
@@ -11,27 +11,35 @@ A TFLint ruleset for AWS best practices, focusing on preventing hardcoded values
 
 This ruleset helps enforce multi-region and multi-partition compatibility by detecting hardcoded AWS regions and partitions in your Terraform configurations. It provides comprehensive coverage across IAM policies, provider configurations, and all AWS resource types where hardcoded values prevent flexible deployments.
 
-## Requirements
+## Why These Rules Matter
 
-- TFLint v0.42+
-- Go v1.25
+**Multi-Region Deployments:** Hardcoded regions prevent your Terraform configurations from being deployed to different AWS regions without modification.
 
-## Installation
+**Multi-Partition Support:** Hardcoded partitions prevent deployment to AWS GovCloud (`aws-us-gov`) or AWS China (`aws-cn`) regions.
 
-TODO: This template repository does not contain release binaries, so this installation will not work. Please rewrite for your repository. See the "Building the plugin" section to get this template ruleset working.
+**Security:** Hardcoded credentials in provider configurations pose security risks and should be avoided.
 
-You can install the plugin with `tflint --init`. Declare a config in `.tflint.hcl` as follows:
+**Maintainability:** Dynamic configurations using variables and data sources are easier to maintain and more flexible.
 
-```hcl
-plugin "aws-meta" {
-  enabled = true
+## How It Works
 
-  version = "0.1.0"
-  source  = "github.com/myerscode/tflint-ruleset-aws-meta"
-}
-```
+This ruleset uses the [aws-meta](https://github.com/myerscode/aws-meta) Go package to dynamically generate regex patterns for all AWS regions and partitions. Instead of maintaining hardcoded lists, the patterns are built at runtime from the latest AWS metadata.
 
-## Rules
+**Benefits:**
+- New AWS regions are automatically detected when the `aws-meta` package is updated
+- Covers all AWS partitions (commercial, GovCloud, China, isolated)
+- No manual maintenance required for region lists
+- Always up-to-date with AWS's latest offerings
+
+## Best Practices
+
+1. **Use data sources:** `data.aws_region.current.name` and `data.aws_partition.current.partition`
+2. **Use variables:** Define region and other parameters as variables
+3. **Environment variables:** Use `AWS_REGION`, `AWS_PROFILE` environment variables
+4. **AWS profiles:** Configure provider to use AWS CLI profiles
+5. **IAM roles:** Use IAM roles for authentication instead of hardcoded keys
+
+## Rules Overview
 
 |Name|Description|Severity|Enabled By Default|Link|
 | --- | --- | --- | --- | --- |
@@ -44,6 +52,6 @@ plugin "aws-meta" {
 |aws_service_principal_hardcoded|Validates that service principals don't use hardcoded DNS suffixes (e.g., amazonaws.com)|WARNING|❌|[docs](/rules/aws_service_principal_hardcoded)|
 |aws_service_principal_dns_suffix|Validates that service principals don't use dns_suffix interpolation|WARNING|✅|[docs](/rules/aws_service_principal_dns_suffix)|
 
-For detailed examples and usage information, see the [Rule Details documentation](docs/rules.md).
+For detailed documentation on each rule, see the [Rules](/rules/) section.
 
 

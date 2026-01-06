@@ -1,7 +1,10 @@
 ---
-title: aws_iam_role_policy_hardcoded_partition
+title: IAM Role Policy Hardcoded Partitions
 description: Detects hardcoded AWS partitions in aws_iam_role_policy resources.
+ruleName: aws_iam_role_policy_hardcoded_partition
 ---
+
+**Rule:** `aws_iam_role_policy_hardcoded_partition`
 
 This rule checks `aws_iam_role_policy` resources for hardcoded AWS partitions in policy documents. It detects:
 
@@ -32,5 +35,15 @@ resource "aws_iam_role_policy" "good" {
       Resource = "arn:${data.aws_partition.current.partition}:s3:::bucket/*"  # ✅ Dynamic partition
     }]
   })
+}
+```
+
+## Enabling this rule
+
+This rule is **disabled by default**. To enable it, add it to your `.tflint.hcl`:
+
+```hcl
+rule "aws_iam_role_policy_hardcoded_partition" {
+  enabled = true
 }
 ```
