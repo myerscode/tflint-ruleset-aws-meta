@@ -18,7 +18,7 @@ export default defineConfig({
             { label: 'Introduction', link: '/' },
             { label: 'Installation', link: '/installation' },
             { label: 'Configuration', link: '/configuration' },
-            { label: 'Contributing', link: '/contributing' },
+            // { label: 'Contributing', link: '/contributing' },
           ],
         },
         {
