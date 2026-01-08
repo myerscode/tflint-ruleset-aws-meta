@@ -41,7 +41,8 @@ The site is published at: https://myerscode.github.io/tflint-ruleset-aws-meta/
 ## Content Structure
 
 - `src/content/docs/index.md` - Homepage/Introduction
-- `src/content/docs/installation.md` - Installation and configuration guide
+- `src/content/docs/installation.md` - Installation guide
+- `src/content/docs/usage.md` - Configuration and usage guide
 - `src/content/docs/contributing.md` - Development and contribution guide
 - `src/content/docs/rules/` - Individual rule documentation pages
 - `astro.config.mjs` - Site configuration including navigation

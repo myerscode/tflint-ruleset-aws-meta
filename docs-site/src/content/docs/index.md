@@ -3,8 +3,6 @@ title: TFLint AWS Meta Ruleset
 description: A TFLint ruleset for AWS best practices, focusing on preventing hardcoded values and promoting flexible, maintainable Terraform code.
 ---
 
-# TFLint AWS Meta Ruleset
-
 [![Build Status](https://github.com/myerscode/tflint-ruleset-aws-meta/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/myerscode/tflint-ruleset-aws-meta/actions)
 
 A TFLint ruleset for AWS best practices, focusing on preventing hardcoded values and promoting flexible, maintainable Terraform code.
@@ -43,14 +41,14 @@ This ruleset uses the [aws-meta](https://github.com/myerscode/aws-meta) Go packa
 
 |Name|Description|Severity|Enabled By Default|Link|
 | --- | --- | --- | --- | --- |
-|aws_meta_hardcoded|Validates that there are no hardcoded AWS regions or partitions in ARN values across all resource types|WARNING|✅|[docs](/rules/aws_meta_hardcoded)|
-|aws_iam_role_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM role policy documents|WARNING|❌|[docs](/rules/aws_iam_role_policy_hardcoded_region)|
-|aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING|❌|[docs](/rules/aws_iam_role_policy_hardcoded_partition)|
-|aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING|❌|[docs](/rules/aws_iam_policy_hardcoded_region)|
 |aws_iam_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM policy documents|WARNING|❌|[docs](/rules/aws_iam_policy_hardcoded_partition)|
+|aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING|❌|[docs](/rules/aws_iam_policy_hardcoded_region)|
+|aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING|❌|[docs](/rules/aws_iam_role_policy_hardcoded_partition)|
+|aws_iam_role_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM role policy documents|WARNING|❌|[docs](/rules/aws_iam_role_policy_hardcoded_region)|
+|aws_meta_hardcoded|Validates that there are no hardcoded AWS regions or partitions in ARN values across all resource types|WARNING|✅|[docs](/rules/aws_meta_hardcoded)|
 |aws_provider_hardcoded_region|Validates that there are no hardcoded AWS regions in provider configuration|WARNING|❌|[docs](/rules/aws_provider_hardcoded_region)|
-|aws_service_principal_hardcoded|Validates that service principals don't use hardcoded DNS suffixes (e.g., amazonaws.com)|WARNING|❌|[docs](/rules/aws_service_principal_hardcoded)|
 |aws_service_principal_dns_suffix|Validates that service principals don't use dns_suffix interpolation|WARNING|✅|[docs](/rules/aws_service_principal_dns_suffix)|
+|aws_service_principal_hardcoded|Validates that service principals don't use hardcoded DNS suffixes (e.g., amazonaws.com)|WARNING|❌|[docs](/rules/aws_service_principal_hardcoded)|
 
 For detailed documentation on each rule, see the [Rules](/rules/) section.
 
