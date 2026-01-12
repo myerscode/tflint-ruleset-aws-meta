@@ -30,15 +30,15 @@ plugin "aws-meta" {
 
 |Name|Description|Severity|Enabled By Default|Link|
 | --- | --- | --- | --- | --- |
-|aws_meta_hardcoded|Validates that there are no hardcoded AWS regions or partitions in ARN values across all resource types|WARNING|✅|[docs](docs/rules.md#aws_meta_hardcoded)|
-|aws_iam_role_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM role policy documents|WARNING|❌|[docs](docs/rules.md#aws_iam_role_policy_hardcoded_region)|
-|aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING|❌|[docs](docs/rules.md#aws_iam_role_policy_hardcoded_partition)|
-|aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING|❌|[docs](docs/rules.md#aws_iam_policy_hardcoded_region)|
-|aws_iam_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM policy documents|WARNING|❌|[docs](docs/rules.md#aws_iam_policy_hardcoded_partition)|
-|aws_provider_hardcoded_region|Validates that there are no hardcoded AWS regions in provider configuration|WARNING|❌|[docs](docs/rules.md#aws_provider_hardcoded_region)|
-|aws_service_principal_hardcoded|Validates that service principals don't use hardcoded DNS suffixes (e.g., amazonaws.com)|WARNING|❌|[docs](docs/rules.md#aws_service_principal_hardcoded)|
-|aws_service_principal_dns_suffix|Validates that service principals don't use dns_suffix interpolation|WARNING|✅|[docs](docs/rules.md#aws_service_principal_dns_suffix)|
+|aws_meta_hardcoded|Validates that there are no hardcoded AWS regions or partitions in ARN values across all resource types|WARNING|✅|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_meta_hardcoded)|
+|aws_iam_role_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM role policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_role_policy_hardcoded_region)|
+|aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_role_policy_hardcoded_partition)|
+|aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_policy_hardcoded_region)|
+|aws_iam_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_policy_hardcoded_partition)|
+|aws_provider_hardcoded_region|Validates that there are no hardcoded AWS regions in provider configuration|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_provider_hardcoded_region)|
+|aws_service_principal_hardcoded|Validates that service principals don't use hardcoded DNS suffixes (e.g., amazonaws.com)|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_service_principal_hardcoded)|
+|aws_service_principal_dns_suffix|Validates that service principals don't use dns_suffix interpolation|WARNING|✅|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_service_principal_dns_suffix)|
 
-For detailed examples and usage information, see the [Rule Details documentation](docs/rules.md).
+For detailed examples and usage information, see the [documentation site](https://myerscode.github.io/tflint-ruleset-aws-meta/).
 
 
