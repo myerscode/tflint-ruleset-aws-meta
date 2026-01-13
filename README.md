@@ -21,7 +21,7 @@ You can install the plugin with `tflint --init`. Declare a config in `.tflint.hc
 plugin "aws-meta" {
   enabled = true
 
-  version = "0.1.0"
+  version = "0.3.0"
   source  = "github.com/myerscode/tflint-ruleset-aws-meta"
 }
 ```
