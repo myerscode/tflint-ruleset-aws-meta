@@ -44,23 +44,41 @@ var dnsSuffixPattern = regexp.MustCompile(`([a-z0-9\-]+)\.\$\{[^}]*\.dns_suffix\
 
 // Check checks for use of dns_suffix in service principals
 func (r *AwsServicePrincipalDNSSuffixRule) Check(runner tflint.Runner) error {
-	// Track which expressions we've already checked to avoid duplicates
+	files, err := runner.GetFiles()
+	if err != nil {
+		return err
+	}
+
 	checked := make(map[string]bool)
 
-	// Walk all expressions in the Terraform files
 	diags := runner.WalkExpressions(tflint.ExprWalkFunc(func(expr hcl.Expression) hcl.Diagnostics {
-		// Skip if we've already checked this expression
 		exprKey := fmt.Sprintf("%s:%d:%d", expr.Range().Filename, expr.Range().Start.Line, expr.Range().Start.Column)
 		if checked[exprKey] {
 			return nil
 		}
 		checked[exprKey] = true
 
+		// Pre-filter: check raw source for "dns_suffix" before making gRPC call
+		exprRange := expr.Range()
+		var sourceText string
+		if file, ok := files[exprRange.Filename]; ok {
+			src := file.Bytes
+			if exprRange.Start.Byte < len(src) && exprRange.End.Byte <= len(src) {
+				sourceText = string(src[exprRange.Start.Byte:exprRange.End.Byte])
+				if !strings.Contains(sourceText, "dns_suffix") {
+					return nil
+				}
+			}
+		}
+
+		// Skip pure variable/attribute references (e.g. data.aws_partition.current.dns_suffix)
+		// These contain "dns_suffix" in their source but aren't hardcoded strings
+		if _, diags := hcl.AbsTraversalForExpr(expr); !diags.HasErrors() {
+			return nil
+		}
+
 		// Try to evaluate the expression as a string
-		// For interpolated strings, we need to check the raw expression
 		err := runner.EvaluateExpr(expr, func(value string) error {
-			// Check if the evaluated value contains dns_suffix pattern
-			// This won't catch interpolated values, so we also check below
 			if strings.Contains(value, "dns_suffix") {
 				if matches := dnsSuffixPattern.FindStringSubmatch(value); len(matches) > 1 {
 					serviceName := matches[1]
@@ -76,37 +94,21 @@ func (r *AwsServicePrincipalDNSSuffixRule) Check(runner tflint.Runner) error {
 			return nil
 		}, nil)
 
-		// If evaluation failed, check the raw expression text for dns_suffix
-		if err != nil {
-			// Get the source text to check for dns_suffix pattern
-			files, filesErr := runner.GetFiles()
-			if filesErr == nil {
-				if file, ok := files[expr.Range().Filename]; ok {
-					sourceBytes := file.Bytes
-					if expr.Range().Start.Byte < len(sourceBytes) && expr.Range().End.Byte <= len(sourceBytes) {
-						sourceText := string(sourceBytes[expr.Range().Start.Byte:expr.Range().End.Byte])
-
-						// Check if this expression contains dns_suffix
-						if strings.Contains(sourceText, "dns_suffix") {
-							// Try to extract service name
-							if matches := regexp.MustCompile(`"([a-z0-9\-]+)\.\$\{[^}]*\.dns_suffix\}"`).FindStringSubmatch(sourceText); len(matches) > 1 {
-								serviceName := matches[1]
-								_ = runner.EmitIssue(
-									r,
-									fmt.Sprintf("Service principal uses dns_suffix. Consider using data.aws_service_principal.%s.name instead for better maintainability", strings.ReplaceAll(serviceName, "-", "_")),
-									expr.Range(),
-								)
-							} else if strings.Contains(sourceText, "dns_suffix") {
-								// Generic message if we can't extract service name
-								_ = runner.EmitIssue(
-									r,
-									"Service principal uses dns_suffix. Consider using data.aws_service_principal data source instead for better maintainability",
-									expr.Range(),
-								)
-							}
-						}
-					}
-				}
+		// If evaluation failed, check the raw source text directly
+		if err != nil && strings.Contains(sourceText, "dns_suffix") {
+			if matches := regexp.MustCompile(`"([a-z0-9\-]+)\.\$\{[^}]*\.dns_suffix\}"`).FindStringSubmatch(sourceText); len(matches) > 1 {
+				serviceName := matches[1]
+				_ = runner.EmitIssue(
+					r,
+					fmt.Sprintf("Service principal uses dns_suffix. Consider using data.aws_service_principal.%s.name instead for better maintainability", strings.ReplaceAll(serviceName, "-", "_")),
+					expr.Range(),
+				)
+			} else {
+				_ = runner.EmitIssue(
+					r,
+					"Service principal uses dns_suffix. Consider using data.aws_service_principal data source instead for better maintainability",
+					expr.Range(),
+				)
 			}
 		}
 

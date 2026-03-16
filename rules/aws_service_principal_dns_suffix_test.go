@@ -26,7 +26,7 @@ resource "aws_iam_role" "test" {
     }]
   })
 }`,
-			ExpectedCount: 7,
+			ExpectedCount: 6,
 		},
 		{
 			Name: "using dns_suffix with multiple services",
@@ -46,7 +46,7 @@ resource "aws_iam_role" "test" {
     }]
   })
 }`,
-			ExpectedCount: 12,
+			ExpectedCount: 9,
 		},
 		{
 			Name: "using data source (no issues)",
