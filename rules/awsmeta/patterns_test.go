@@ -117,3 +117,30 @@ func TestGetRegionInStringPattern(t *testing.T) {
 	}
 }
 
+func TestGetDNSSuffixPattern(t *testing.T) {
+	pattern := GetDNSSuffixPattern()
+
+	testCases := []struct {
+		value    string
+		expected bool
+	}{
+		{"s3.amazonaws.com", true},
+		{"lambda.amazonaws.com", true},
+		{"ec2.amazonaws.com.cn", true},
+		{"ecs-tasks.amazonaws.com", true},
+		{"lambda.c2s.ic.gov", true},
+		{"s3.sc2s.sgov.gov", true},
+		{"lambda.amazonaws.eu", true},
+		{"s3.cloud.adc-e.uk", true},
+		{"not-a-service-principal", false},
+		{"amazonaws.com", false}, // No service name prefix
+		{"", false},
+	}
+
+	for _, tc := range testCases {
+		result := pattern.MatchString(tc.value)
+		if result != tc.expected {
+			t.Errorf("Value %q: expected %v, got %v", tc.value, tc.expected, result)
+		}
+	}
+}
