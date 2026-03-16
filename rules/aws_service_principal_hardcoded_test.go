@@ -41,13 +41,41 @@ resource "aws_iam_role" "test" {
 			ExpectedCount: 2,
 		},
 		{
-			Name: "hardcoded service principal amazonaws-us-gov.com",
+			Name: "hardcoded service principal amazonaws-us-gov.com (legacy, not a real DNS suffix)",
 			Content: `
 resource "aws_iam_role" "test" {
   assume_role_policy = jsonencode({
     Statement = [{
       Principal = {
         Service = "ec2.amazonaws-us-gov.com"
+      }
+    }]
+  })
+}`,
+			ExpectedCount: 0,
+		},
+		{
+			Name: "hardcoded service principal isolated partition c2s.ic.gov",
+			Content: `
+resource "aws_iam_role" "test" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = "s3.c2s.ic.gov"
+      }
+    }]
+  })
+}`,
+			ExpectedCount: 2,
+		},
+		{
+			Name: "hardcoded service principal eu sovereign amazonaws.eu",
+			Content: `
+resource "aws_iam_role" "test" {
+  assume_role_policy = jsonencode({
+    Statement = [{
+      Principal = {
+        Service = "lambda.amazonaws.eu"
       }
     }]
   })

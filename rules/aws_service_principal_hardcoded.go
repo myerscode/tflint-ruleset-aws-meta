@@ -2,10 +2,10 @@ package rules
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/hashicorp/hcl/v2"
+	"github.com/myerscode/tflint-ruleset-aws-meta/rules/awsmeta"
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
@@ -39,31 +39,40 @@ func (r *AwsServicePrincipalHardcodedRule) Link() string {
 	return ""
 }
 
-// Pattern to match hardcoded service principal DNS suffixes
-var servicePrincipalPattern = regexp.MustCompile(`([a-z0-9\-]+)\.(amazonaws\.com(?:\.cn)?|amazonaws-us-gov\.com)`)
-
 // Check checks for hardcoded service principal DNS suffixes
 func (r *AwsServicePrincipalHardcodedRule) Check(runner tflint.Runner) error {
-	// Track which expressions we've already checked to avoid duplicates
+	dnsSuffixPattern := awsmeta.GetDNSSuffixPattern()
+
+	files, err := runner.GetFiles()
+	if err != nil {
+		return err
+	}
+
 	checked := make(map[string]bool)
 
-	// Walk all expressions in the Terraform files
 	diags := runner.WalkExpressions(tflint.ExprWalkFunc(func(expr hcl.Expression) hcl.Diagnostics {
-		// Skip if we've already checked this expression
 		exprKey := fmt.Sprintf("%s:%d:%d", expr.Range().Filename, expr.Range().Start.Line, expr.Range().Start.Column)
 		if checked[exprKey] {
 			return nil
 		}
 		checked[exprKey] = true
 
-		// Try to evaluate the expression as a string
-		err := runner.EvaluateExpr(expr, func(value string) error {
-			// Check if it matches a hardcoded service principal pattern
-			if matches := servicePrincipalPattern.FindStringSubmatch(value); len(matches) > 0 {
-				serviceName := matches[1]
-				dnsSuffix := matches[2]
+		// Pre-filter: check raw source for any known DNS suffix before making gRPC call
+		exprRange := expr.Range()
+		if file, ok := files[exprRange.Filename]; ok {
+			src := file.Bytes
+			if exprRange.Start.Byte < len(src) && exprRange.End.Byte <= len(src) {
+				sourceText := string(src[exprRange.Start.Byte:exprRange.End.Byte])
+				if !dnsSuffixPattern.MatchString(sourceText) {
+					return nil
+				}
+			}
+		}
 
-				// Emit issue for hardcoded service principal
+		err := runner.EvaluateExpr(expr, func(value string) error {
+			if matches := dnsSuffixPattern.FindStringSubmatch(value); len(matches) > 0 {
+				serviceName := matches[1]
+
 				if err := runner.EmitIssue(
 					r,
 					fmt.Sprintf("Hardcoded service principal '%s' found. Consider using data.aws_service_principal.%s.name for multi-partition compatibility", value, strings.ReplaceAll(serviceName, "-", "_")),
@@ -71,14 +80,11 @@ func (r *AwsServicePrincipalHardcodedRule) Check(runner tflint.Runner) error {
 				); err != nil {
 					return err
 				}
-
-				_ = dnsSuffix // Keep for potential future use
 			}
 
 			return nil
 		}, nil)
 
-		// Silently ignore evaluation errors (variables, data sources, functions, etc.)
 		_ = err
 
 		return nil
