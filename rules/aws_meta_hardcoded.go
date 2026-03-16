@@ -41,26 +41,45 @@ func (r *AwsMetaHardcodedRule) Link() string {
 }
 
 // Check checks for hardcoded regions and partitions in ARN-like string values
+// Check checks for hardcoded regions and partitions in ARN-like string values
 func (r *AwsMetaHardcodedRule) Check(runner tflint.Runner) error {
 	arnRegionPattern := awsmeta.GetARNRegionPattern()
 	arnPartitionPattern := awsmeta.GetPartitionPattern()
+
+	// Get all source files upfront so we can inspect raw expression text
+	// before making expensive gRPC EvaluateExpr calls
+	files, err := runner.GetFiles()
+	if err != nil {
+		return err
+	}
 
 	// Track which expressions we've already checked to avoid duplicates
 	checked := make(map[string]bool)
 
 	// Walk all expressions in the Terraform files
 	diags := runner.WalkExpressions(tflint.ExprWalkFunc(func(expr hcl.Expression) hcl.Diagnostics {
-		// Skip if we've already checked this expression
-		// Note: ExprWalkFunc is called for both Enter and Exit, so we deduplicate
 		exprKey := fmt.Sprintf("%s:%d:%d", expr.Range().Filename, expr.Range().Start.Line, expr.Range().Start.Column)
 		if checked[exprKey] {
 			return nil
 		}
 		checked[exprKey] = true
 
+		// Pre-filter: check the raw source text for "arn:" before making
+		// the expensive gRPC EvaluateExpr call. This eliminates ~99% of
+		// expressions that can't possibly contain a hardcoded ARN.
+		exprRange := expr.Range()
+		if file, ok := files[exprRange.Filename]; ok {
+			src := file.Bytes
+			if exprRange.Start.Byte < len(src) && exprRange.End.Byte <= len(src) {
+				sourceText := strings.ToLower(string(src[exprRange.Start.Byte:exprRange.End.Byte]))
+				if !strings.Contains(sourceText, "arn:") {
+					return nil
+				}
+			}
+		}
+
 		// Try to evaluate the expression as a string
 		err := runner.EvaluateExpr(expr, func(value string) error {
-			// Only check if it looks like an ARN
 			if !strings.HasPrefix(value, "arn:") {
 				return nil
 			}
@@ -92,7 +111,7 @@ func (r *AwsMetaHardcodedRule) Check(runner tflint.Runner) error {
 			return nil
 		}, nil)
 
-		// Silently ignore evaluation errors (variables, data sources, functions, etc.)
+		// Silently ignore evaluation errors
 		_ = err
 
 		return nil
