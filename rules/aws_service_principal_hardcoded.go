@@ -26,7 +26,7 @@ func (r *AwsServicePrincipalHardcodedRule) Name() string {
 
 // Enabled returns whether the rule is enabled by default
 func (r *AwsServicePrincipalHardcodedRule) Enabled() bool {
-	return false // Optional rule
+	return true
 }
 
 // Severity returns the rule severity

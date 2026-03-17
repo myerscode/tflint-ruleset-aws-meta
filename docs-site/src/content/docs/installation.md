@@ -25,10 +25,11 @@ plugin "aws-meta" {
 
 ## Basic Configuration
 
-Once installed, the plugin will run with default settings. Two rules are enabled by default:
+Once installed, the plugin will run with default settings. Three rules are enabled by default:
 
 - `aws_meta_hardcoded` - Comprehensive ARN validation across all AWS resources
 - `aws_service_principal_dns_suffix` - Detects dns_suffix interpolation in service principals
+- `aws_service_principal_hardcoded` - Detects hardcoded DNS suffixes in service principals
 
 ## Next Steps
 

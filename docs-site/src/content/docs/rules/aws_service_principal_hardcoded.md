@@ -10,7 +10,7 @@ This rule checks for hardcoded AWS service principal DNS suffixes in expressions
 
 It matches service principal forms like `service.amazonaws.com`, `service.amazonaws.com.cn`, and `service.amazonaws-us-gov.com` and emits an issue suggesting use of data sources (e.g., `data.aws_service_principal.<name>.name`) for multi-partition compatibility.
 
-**Note:** This rule is disabled by default as it may produce many findings in existing codebases. Enable it when you want to migrate to using data sources.
+**Note:** This rule is enabled by default. It detects hardcoded DNS suffixes and recommends using data sources for multi-partition compatibility.
 
 ## Example violations
 
@@ -68,12 +68,12 @@ resource "aws_iam_role" "ec2_role" {
 }
 ```
 
-## Enabling this rule
+## Disabling this rule
 
-To enable this optional rule, add it to your `.tflint.hcl`:
+This rule is enabled by default. To disable it, add the following to your `.tflint.hcl`:
 
 ```hcl
 rule "aws_service_principal_hardcoded" {
-  enabled = true
+  enabled = false
 }
 ```

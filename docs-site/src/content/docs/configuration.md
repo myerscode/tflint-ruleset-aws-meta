@@ -85,10 +85,6 @@ rule "aws_iam_policy_hardcoded_partition" {
 rule "aws_provider_hardcoded_region" {
   enabled = true
 }
-
-rule "aws_service_principal_hardcoded" {
-  enabled = true
-}
 ```
 
 ### Selective Configuration (IAM Rules Only)
@@ -136,10 +132,11 @@ cd examples/failing && tflint
 
 ## Default Rules
 
-Two rules are enabled by default when you install the plugin:
+Three rules are enabled by default when you install the plugin:
 
 - **`aws_meta_hardcoded`** - Comprehensive ARN validation across all AWS resources
 - **`aws_service_principal_dns_suffix`** - Detects dns_suffix interpolation in service principals
+- **`aws_service_principal_hardcoded`** - Detects hardcoded DNS suffixes in service principals
 
 All other rules are disabled by default to avoid overwhelming existing codebases with violations.
 
@@ -148,6 +145,7 @@ All other rules are disabled by default to avoid overwhelming existing codebases
 ### Comprehensive Rules (Enabled by Default)
 - `aws_meta_hardcoded` - Checks all AWS resources for hardcoded regions/partitions in ARNs
 - `aws_service_principal_dns_suffix` - Detects dns_suffix interpolation
+- `aws_service_principal_hardcoded` - Detects hardcoded DNS suffixes in service principals
 
 ### IAM Policy Rules (Disabled by Default)
 - `aws_iam_policy_hardcoded_region` - Hardcoded regions in IAM policies
@@ -158,9 +156,9 @@ All other rules are disabled by default to avoid overwhelming existing codebases
 ### Provider Rules (Disabled by Default)
 - `aws_provider_hardcoded_region` - Hardcoded regions in provider configuration
 
-### Service Principal Rules (Mixed)
-- `aws_service_principal_hardcoded` - Hardcoded DNS suffixes (disabled by default)
-- `aws_service_principal_dns_suffix` - DNS suffix interpolation (enabled by default)
+### Service Principal Rules (Enabled by Default)
+- `aws_service_principal_hardcoded` - Hardcoded DNS suffixes
+- `aws_service_principal_dns_suffix` - DNS suffix interpolation
 
 ## Common Workflows
 

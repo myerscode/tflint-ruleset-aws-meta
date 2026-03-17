@@ -36,7 +36,7 @@ plugin "aws-meta" {
 |aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_policy_hardcoded_region)|
 |aws_iam_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_policy_hardcoded_partition)|
 |aws_provider_hardcoded_region|Validates that there are no hardcoded AWS regions in provider configuration|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_provider_hardcoded_region)|
-|aws_service_principal_hardcoded|Validates that service principals don't use hardcoded DNS suffixes (e.g., amazonaws.com)|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_service_principal_hardcoded)|
+|aws_service_principal_hardcoded|Validates that service principals don't use hardcoded DNS suffixes (e.g., amazonaws.com)|WARNING|✅|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_service_principal_hardcoded)|
 |aws_service_principal_dns_suffix|Validates that service principals don't use dns_suffix interpolation|WARNING|✅|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_service_principal_dns_suffix)|
 
 For detailed examples and usage information, see the [documentation site](https://myerscode.github.io/tflint-ruleset-aws-meta/).
