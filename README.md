@@ -1,6 +1,10 @@
 # TFLint AWS Meta Ruleset
 
 [![Build Status](https://github.com/myerscode/tflint-ruleset-aws-meta/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/myerscode/tflint-ruleset-aws-meta/actions)
+[![Latest Release](https://img.shields.io/github/v/release/myerscode/tflint-ruleset-aws-meta)](https://github.com/myerscode/tflint-ruleset-aws-meta/releases/latest)
+[![Go Reference](https://pkg.go.dev/badge/github.com/myerscode/tflint-ruleset-aws-meta.svg)](https://pkg.go.dev/github.com/myerscode/tflint-ruleset-aws-meta)
+[![Go Report Card](https://goreportcard.com/badge/github.com/myerscode/tflint-ruleset-aws-meta)](https://goreportcard.com/report/github.com/myerscode/tflint-ruleset-aws-meta)
+[![License](https://img.shields.io/github/license/myerscode/tflint-ruleset-aws-meta)](https://github.com/myerscode/tflint-ruleset-aws-meta/blob/main/LICENSE)
 
 A TFLint ruleset for AWS best practices, focusing on preventing hardcoded values and promoting flexible, maintainable Terraform code.
 
