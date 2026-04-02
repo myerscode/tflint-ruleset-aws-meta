@@ -71,6 +71,44 @@ provider "aws" {
 }`,
 			ExpectedCount: 1, // Only the first provider has hardcoded region
 		},
+		{
+			Name: "region using variable - no issues",
+			Content: `
+variable "aws_region" {
+  default = "us-east-1"
+}
+
+provider "aws" {
+  region = var.aws_region
+}`,
+			ExpectedCount: 0,
+		},
+		{
+			Name: "region using local - no issues",
+			Content: `
+locals {
+  region = "eu-west-1"
+}
+
+provider "aws" {
+  region = local.region
+}`,
+			ExpectedCount: 0,
+		},
+		{
+			Name: "assume_role ARN using variable - no issues",
+			Content: `
+variable "role_arn" {
+  default = "arn:aws:iam:us-west-2:123456789012:role/terraform-role"
+}
+
+provider "aws" {
+  assume_role {
+    role_arn = var.role_arn
+  }
+}`,
+			ExpectedCount: 0,
+		},
 	}
 
 	rule := NewAwsProviderHardcodedRegionRule()

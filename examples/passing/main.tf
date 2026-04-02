@@ -24,6 +24,18 @@ provider "aws" {
   # No region specified - will use environment or profile configuration
 }
 
+# Provider configuration using a variable (not hardcoded)
+variable "aws_region" {
+  type        = string
+  description = "AWS region"
+  default     = "eu-west-2"
+}
+
+provider "aws" {
+  alias  = "variable_region"
+  region = var.aws_region
+}
+
 # S3 bucket without hardcoded region
 resource "aws_s3_bucket" "example" {
   bucket = "my-example-bucket-${random_id.bucket_suffix.hex}"
@@ -158,4 +170,35 @@ resource "aws_iam_role" "multi_service_principal" {
       }
     }]
   })
+}
+
+# Dynamic availability zones (best practice)
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
+module "vpc" {
+  source = "./network"
+
+  subnets = {
+    public = {
+      availability_zones = data.aws_availability_zones.available.names
+    }
+  }
+}
+
+# Dynamic AMI lookup (best practice)
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-*-amd64-server-*"]
+  }
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
 }

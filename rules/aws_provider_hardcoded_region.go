@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/hcl/v2"
 	"github.com/myerscode/tflint-ruleset-aws-meta/rules/awsmeta"
 	"github.com/terraform-linters/tflint-plugin-sdk/hclext"
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
@@ -44,6 +45,11 @@ func (r *AwsProviderHardcodedRegionRule) Check(runner tflint.Runner) error {
 	regionPattern := awsmeta.GetRegionPattern()
 	arnRegionPattern := awsmeta.GetARNRegionPattern()
 
+	files, err := runner.GetFiles()
+	if err != nil {
+		return err
+	}
+
 	providers, err := runner.GetProviderContent("aws", &hclext.BodySchema{
 		Attributes: []hclext.AttributeSchema{
 			{Name: "region"},
@@ -65,6 +71,11 @@ func (r *AwsProviderHardcodedRegionRule) Check(runner tflint.Runner) error {
 
 	for _, provider := range providers.Blocks {
 		if attr, exists := provider.Body.Attributes["region"]; exists {
+			// Skip if the expression is not a literal (e.g. var.region, local.region)
+			if isReference(files, attr.Expr.Range()) {
+				continue
+			}
+
 			err := runner.EvaluateExpr(attr.Expr, func(region string) error {
 				if regionPattern.MatchString(region) {
 					return runner.EmitIssue(
@@ -83,6 +94,10 @@ func (r *AwsProviderHardcodedRegionRule) Check(runner tflint.Runner) error {
 		for _, assumeRoleBlock := range provider.Body.Blocks {
 			if assumeRoleBlock.Type == "assume_role" {
 				if attr, exists := assumeRoleBlock.Body.Attributes["role_arn"]; exists {
+					if isReference(files, attr.Expr.Range()) {
+						continue
+					}
+
 					err := runner.EvaluateExpr(attr.Expr, func(roleArn string) error {
 						if matches := arnRegionPattern.FindStringSubmatch(roleArn); len(matches) > 1 {
 							region := matches[1]
@@ -103,4 +118,19 @@ func (r *AwsProviderHardcodedRegionRule) Check(runner tflint.Runner) error {
 	}
 
 	return nil
+}
+
+// isReference checks if the expression source text contains variable, local, or data references
+func isReference(files map[string]*hcl.File, exprRange hcl.Range) bool {
+	if file, ok := files[exprRange.Filename]; ok {
+		src := file.Bytes
+		if exprRange.Start.Byte < len(src) && exprRange.End.Byte <= len(src) {
+			sourceText := string(src[exprRange.Start.Byte:exprRange.End.Byte])
+			return strings.Contains(sourceText, "var.") ||
+				strings.Contains(sourceText, "local.") ||
+				strings.Contains(sourceText, "data.") ||
+				strings.Contains(sourceText, "module.")
+		}
+	}
+	return false
 }
