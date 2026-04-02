@@ -32,4 +32,4 @@ checksum:
     - glob: ./dist/raw/*
 release:
   github:
-  draft: true
+  draft: false

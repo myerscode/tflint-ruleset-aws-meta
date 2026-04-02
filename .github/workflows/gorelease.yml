@@ -7,9 +7,6 @@ on:
         description: 'Version (e.g. 0.5.0)'
         required: true
         type: string
-  push:
-    tags:
-      - v*.*.*
 
 permissions:
   contents: write
