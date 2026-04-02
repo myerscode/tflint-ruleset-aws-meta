@@ -18,7 +18,7 @@ Most rules are disabled by default to avoid overwhelming existing codebases. You
 ```hcl
 plugin "aws-meta" {
   enabled = true
-  version = "0.5.0"
+  version = "0.5.1"
   source  = "github.com/myerscode/tflint-ruleset-aws-meta"
 }
 
@@ -53,7 +53,7 @@ rule "aws_meta_hardcoded" {
 ```hcl
 plugin "aws-meta" {
   enabled = true
-  version = "0.5.0"
+  version = "0.5.1"
   source  = "github.com/myerscode/tflint-ruleset-aws-meta"
 }
 ```
@@ -62,7 +62,7 @@ plugin "aws-meta" {
 ```hcl
 plugin "aws-meta" {
   enabled = true
-  version = "0.5.0"
+  version = "0.5.1"
   source  = "github.com/myerscode/tflint-ruleset-aws-meta"
 }
 
@@ -91,7 +91,7 @@ rule "aws_provider_hardcoded_region" {
 ```hcl
 plugin "aws-meta" {
   enabled = true
-  version = "0.5.0"
+  version = "0.5.1"
   source  = "github.com/myerscode/tflint-ruleset-aws-meta"
 }
 

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.5.1] - 2026-04-02
+### :bug: Bug Fixes
+- [`628bebe`](https://github.com/myerscode/tflint-ruleset-aws-meta/commit/628bebe4c9618f5bcfd9f7ecdd84ddf36813b941) - **ci**: prevent duplicate releases *(commit by [@oniice](https://github.com/oniice))*
+- [`a29226a`](https://github.com/myerscode/tflint-ruleset-aws-meta/commit/a29226a9d3981a38ef0024097907a72f82556dd6) - **rules**: skip variable references in provider region check *(commit by [@oniice](https://github.com/oniice))*
+
+
 ## [v0.5.0] - 2026-04-02
 ### :sparkles: New Features
 - [`85e42f3`](https://github.com/myerscode/tflint-ruleset-aws-meta/commit/85e42f3ffbcdaa5eaaaf615cc4c5759e91afc908) - **release**: inject version from git tag *(commit by [@oniice](https://github.com/oniice))*
@@ -89,3 +95,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.2.0]: https://github.com/myerscode/tflint-ruleset-aws-meta/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/myerscode/tflint-ruleset-aws-meta/releases/tag/v0.1.0
 [v0.5.0]: https://github.com/myerscode/tflint-ruleset-aws-meta/compare/v0.4.1...v0.5.0
+[v0.5.1]: https://github.com/myerscode/tflint-ruleset-aws-meta/compare/v0.5.0...v0.5.1
