@@ -6,11 +6,13 @@ import (
 	"github.com/terraform-linters/tflint-plugin-sdk/tflint"
 )
 
+var version = "dev"
+
 func main() {
 	plugin.Serve(&plugin.ServeOpts{
 		RuleSet: &tflint.BuiltinRuleSet{
 			Name:    "aws-meta",
-			Version: "0.1.0",
+			Version: version,
 			Rules: []tflint.Rule{
 				rules.NewAwsMetaHardcodedRule(),
 				rules.NewAwsIamRolePolicyHardcodedRegionRule(),
