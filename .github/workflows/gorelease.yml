@@ -1,11 +1,15 @@
 name: release
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 0.5.0)'
+        required: true
+        type: string
   push:
-    branches:
-    - '!*'
     tags:
-    - v*.*.*
+      - v*.*.*
 
 permissions:
   contents: write
@@ -13,11 +17,58 @@ permissions:
   attestations: write
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      with:
+        ref: main
+        fetch-depth: 0
+        token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
+        persist-credentials: true
+
+    - name: Determine version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+          # Strip leading v if provided
+          VERSION="${VERSION#v}"
+          TAG="v${VERSION}"
+        else
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+        fi
+        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+        echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+    - name: Validate semver format
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          echo "Error: Version must be in SemVer format MAJOR.MINOR.PATCH (e.g. 0.5.0)"
+          exit 1
+        fi
+
+    - name: Create and push tag
+      if: github.event_name == 'workflow_dispatch'
+      run: |
+        git tag "${{ steps.version.outputs.tag }}"
+        git push origin "${{ steps.version.outputs.tag }}"
+
   goreleaser:
+    needs: prepare
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
       uses: actions/checkout@v6
+      with:
+        ref: ${{ needs.prepare.outputs.tag }}
+        fetch-depth: 0
     - name: Set up Go
       uses: actions/setup-go@v6
       with:
@@ -34,7 +85,7 @@ jobs:
         subject-path: 'dist/checksums.txt'
 
   update-docs:
-    needs: goreleaser
+    needs: [prepare, goreleaser]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -44,21 +95,23 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
         persist-credentials: true
+
     - name: Update version in docs
       run: |
-        VERSION="${GITHUB_REF_NAME#v}"
+        VERSION="${{ needs.prepare.outputs.version }}"
         sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"${VERSION}\"/g" README.md
         sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"${VERSION}\"/g" docs-site/src/content/docs/installation.md
         sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"${VERSION}\"/g" docs-site/src/content/docs/configuration.md
+
     - name: Update changelog
       uses: requarks/changelog-action@v1
       with:
         token: ${{ github.token }}
-        tag: ${{ github.ref_name }}
+        tag: ${{ needs.prepare.outputs.tag }}
+
     - name: Commit and push
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add README.md docs-site/src/content/docs/installation.md docs-site/src/content/docs/configuration.md CHANGELOG.md
-        git diff --staged --quiet || git commit -m "docs: update version and changelog for ${GITHUB_REF_NAME#v}"
-        git push
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        branch: main
+        commit_message: "docs: update version and changelog for ${{ needs.prepare.outputs.version }}"
+        file_pattern: README.md docs-site/src/content/docs/installation.md docs-site/src/content/docs/configuration.md CHANGELOG.md
