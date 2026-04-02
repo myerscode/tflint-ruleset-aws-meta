@@ -41,16 +41,22 @@ jobs:
       uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         ref: main
+        fetch-depth: 0
     - name: Update version in docs
       run: |
         VERSION="${GITHUB_REF_NAME#v}"
         sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"${VERSION}\"/g" README.md
         sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"${VERSION}\"/g" docs-site/src/content/docs/installation.md
         sed -i "s/version = \"[0-9]*\.[0-9]*\.[0-9]*\"/version = \"${VERSION}\"/g" docs-site/src/content/docs/configuration.md
+    - name: Update changelog
+      uses: requarks/changelog-action@v1
+      with:
+        token: ${{ github.token }}
+        tag: ${{ github.ref_name }}
     - name: Commit and push
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add README.md docs-site/src/content/docs/installation.md docs-site/src/content/docs/configuration.md
-        git diff --staged --quiet || git commit -m "docs: update version to ${GITHUB_REF_NAME#v}"
+        git add README.md docs-site/src/content/docs/installation.md docs-site/src/content/docs/configuration.md CHANGELOG.md
+        git diff --staged --quiet || git commit -m "docs: update version and changelog for ${GITHUB_REF_NAME#v}"
         git push
