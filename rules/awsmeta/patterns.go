@@ -28,6 +28,12 @@ var (
 
 	dnsSuffixPattern     *regexp.Regexp
 	dnsSuffixPatternOnce sync.Once
+
+	accountIDPattern     *regexp.Regexp
+	accountIDPatternOnce sync.Once
+
+	amiIDPattern     *regexp.Regexp
+	amiIDPatternOnce sync.Once
 )
 
 func loadRegionNames() []string {
@@ -138,4 +144,22 @@ func GetDNSSuffixPattern() *regexp.Regexp {
 		dnsSuffixPattern = regexp.MustCompile(pattern)
 	})
 	return dnsSuffixPattern
+}
+
+// GetAccountIDPattern returns a compiled regex pattern matching 12-digit AWS account IDs.
+func GetAccountIDPattern() *regexp.Regexp {
+	accountIDPatternOnce.Do(func() {
+		// AWS account IDs are always exactly 12 digits
+		accountIDPattern = regexp.MustCompile(`\b(\d{12})\b`)
+	})
+	return accountIDPattern
+}
+
+// GetAMIIDPattern returns a compiled regex pattern matching AWS AMI IDs.
+func GetAMIIDPattern() *regexp.Regexp {
+	amiIDPatternOnce.Do(func() {
+		// AMI IDs follow the format ami-<hex string>
+		amiIDPattern = regexp.MustCompile(`\bami-[0-9a-f]{8,17}\b`)
+	})
+	return amiIDPattern
 }

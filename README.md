@@ -34,6 +34,7 @@ plugin "aws-meta" {
 
 |Name|Description|Severity|Enabled By Default|Link|
 | --- | --- | --- | --- | --- |
+|aws_hardcoded_ids|Validates that there are no hardcoded AWS account IDs or AMI IDs|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_hardcoded_ids)|
 |aws_meta_hardcoded|Validates that there are no hardcoded AWS regions or partitions in ARN values across all resource types|WARNING|✅|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_meta_hardcoded)|
 |aws_iam_role_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM role policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_role_policy_hardcoded_region)|
 |aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING|❌|[docs](https://myerscode.github.io/tflint-ruleset-aws-meta/rules/aws_iam_role_policy_hardcoded_partition)|

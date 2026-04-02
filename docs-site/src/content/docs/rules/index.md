@@ -9,6 +9,7 @@ next: false
 
 This section contains documentation for all the rules included in the tflint AWS Meta ruleset.
 
+- [Hardcoded AWS IDs](aws_hardcoded_ids)
 - [IAM Policy Hardcoded Partitions](aws_iam_policy_hardcoded_partition)
 - [IAM Policy Hardcoded Regions](aws_iam_policy_hardcoded_region)
 - [IAM Role Policy Hardcoded Partitions](aws_iam_role_policy_hardcoded_partition)

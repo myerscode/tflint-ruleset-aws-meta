@@ -156,6 +156,9 @@ All other rules are disabled by default to avoid overwhelming existing codebases
 ### Provider Rules (Disabled by Default)
 - `aws_provider_hardcoded_region` - Hardcoded regions in provider configuration
 
+### ID Rules (Disabled by Default)
+- `aws_hardcoded_ids` - Hardcoded AWS account IDs and AMI IDs
+
 ### Service Principal Rules (Enabled by Default)
 - `aws_service_principal_hardcoded` - Hardcoded DNS suffixes
 - `aws_service_principal_dns_suffix` - DNS suffix interpolation

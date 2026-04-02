@@ -15,6 +15,7 @@ func main() {
 			Version: version,
 			Rules: []tflint.Rule{
 				rules.NewAwsMetaHardcodedRule(),
+				rules.NewAwsHardcodedIDsRule(),
 				rules.NewAwsIamRolePolicyHardcodedRegionRule(),
 				rules.NewAwsIamRolePolicyHardcodedPartitionRule(),
 				rules.NewAwsIamPolicyHardcodedRegionRule(),

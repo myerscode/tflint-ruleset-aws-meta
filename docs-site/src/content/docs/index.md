@@ -41,6 +41,7 @@ This ruleset uses the [aws-meta](https://github.com/myerscode/aws-meta) Go packa
 
 |Name|Description|Severity|Enabled By Default|Link|
 | --- | --- | --- | --- | --- |
+|aws_hardcoded_ids|Validates that there are no hardcoded AWS account IDs or AMI IDs|WARNING|❌|[docs](/rules/aws_hardcoded_ids)|
 |aws_iam_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM policy documents|WARNING|❌|[docs](/rules/aws_iam_policy_hardcoded_partition)|
 |aws_iam_policy_hardcoded_region|Validates that there are no hardcoded AWS regions in IAM policy documents|WARNING|❌|[docs](/rules/aws_iam_policy_hardcoded_region)|
 |aws_iam_role_policy_hardcoded_partition|Validates that there are no hardcoded AWS partitions in IAM role policy documents|WARNING|❌|[docs](/rules/aws_iam_role_policy_hardcoded_partition)|

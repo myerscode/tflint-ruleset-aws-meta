@@ -204,3 +204,16 @@ resource "aws_instance" "hardcoded_az" {
   instance_type     = "t3.micro"
   availability_zone = "us-east-1a"
 }
+
+# Resource with hardcoded AMI ID (will trigger aws_hardcoded_ids rule)
+resource "aws_instance" "hardcoded_ami" {
+  ami           = "ami-0abcdef1234567890"
+  instance_type = "t3.micro"
+}
+
+# Resource with hardcoded account ID (will trigger aws_hardcoded_ids rule)
+resource "aws_guardduty_member" "hardcoded_account" {
+  account_id  = "123456789012"
+  detector_id = "detector-id"
+  email       = "example@example.com"
+}
