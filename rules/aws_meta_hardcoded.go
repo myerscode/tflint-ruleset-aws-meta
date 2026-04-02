@@ -45,6 +45,8 @@ func (r *AwsMetaHardcodedRule) Link() string {
 func (r *AwsMetaHardcodedRule) Check(runner tflint.Runner) error {
 	arnRegionPattern := awsmeta.GetARNRegionPattern()
 	arnPartitionPattern := awsmeta.GetPartitionPattern()
+	azPattern := awsmeta.GetAvailabilityZonePattern()
+	regionPattern := awsmeta.GetRegionPattern()
 
 	// Get all source files upfront so we can inspect raw expression text
 	// before making expensive gRPC EvaluateExpr calls
@@ -64,15 +66,16 @@ func (r *AwsMetaHardcodedRule) Check(runner tflint.Runner) error {
 		}
 		checked[exprKey] = true
 
-		// Pre-filter: check the raw source text for "arn:" before making
-		// the expensive gRPC EvaluateExpr call. This eliminates ~99% of
-		// expressions that can't possibly contain a hardcoded ARN.
+		// Pre-filter: check the raw source text for potential matches before
+		// making the expensive gRPC EvaluateExpr call.
 		exprRange := expr.Range()
 		if file, ok := files[exprRange.Filename]; ok {
 			src := file.Bytes
 			if exprRange.Start.Byte < len(src) && exprRange.End.Byte <= len(src) {
 				sourceText := strings.ToLower(string(src[exprRange.Start.Byte:exprRange.End.Byte]))
-				if !strings.Contains(sourceText, "arn:") {
+				hasARN := strings.Contains(sourceText, "arn:")
+				hasRegionLike := awsmeta.GetRegionInStringPattern().MatchString(sourceText)
+				if !hasARN && !hasRegionLike {
 					return nil
 				}
 			}
@@ -80,28 +83,55 @@ func (r *AwsMetaHardcodedRule) Check(runner tflint.Runner) error {
 
 		// Try to evaluate the expression as a string
 		err := runner.EvaluateExpr(expr, func(value string) error {
-			if !strings.HasPrefix(value, "arn:") {
+			// Check for hardcoded ARN values
+			if strings.HasPrefix(value, "arn:") {
+				// Check for hardcoded region in ARN
+				if matches := arnRegionPattern.FindStringSubmatch(value); len(matches) > 1 {
+					region := matches[1]
+					if err := runner.EmitIssue(
+						r,
+						fmt.Sprintf("Hardcoded AWS region '%s' found in ARN. Consider using data.aws_region.current.name", region),
+						expr.Range(),
+					); err != nil {
+						return err
+					}
+				}
+
+				// Check for hardcoded partition in ARN
+				if matches := arnPartitionPattern.FindStringSubmatch(value); len(matches) > 1 {
+					partition := matches[1]
+					if err := runner.EmitIssue(
+						r,
+						fmt.Sprintf("Hardcoded AWS partition '%s' found in ARN. Consider using data.aws_partition.current.partition", partition),
+						expr.Range(),
+					); err != nil {
+						return err
+					}
+				}
+
 				return nil
 			}
 
-			// Check for hardcoded region in ARN
-			if matches := arnRegionPattern.FindStringSubmatch(value); len(matches) > 1 {
-				region := matches[1]
+			// Check for hardcoded availability zone (e.g. "eu-west-2a")
+			if azPattern.MatchString(value) {
+				// Extract the region part (everything except the last character)
+				region := value[:len(value)-1]
 				if err := runner.EmitIssue(
 					r,
-					fmt.Sprintf("Hardcoded AWS region '%s' found in ARN. Consider using data.aws_region.current.name", region),
+					fmt.Sprintf("Hardcoded AWS availability zone '%s' found. Consider using data.aws_availability_zones to dynamically fetch AZs for the current region", value),
 					expr.Range(),
 				); err != nil {
 					return err
 				}
+				_ = region
+				return nil
 			}
 
-			// Check for hardcoded partition in ARN
-			if matches := arnPartitionPattern.FindStringSubmatch(value); len(matches) > 1 {
-				partition := matches[1]
+			// Check for hardcoded region as a standalone value (e.g. "eu-west-2")
+			if regionPattern.MatchString(value) {
 				if err := runner.EmitIssue(
 					r,
-					fmt.Sprintf("Hardcoded AWS partition '%s' found in ARN. Consider using data.aws_partition.current.partition", partition),
+					fmt.Sprintf("Hardcoded AWS region '%s' found. Consider using data.aws_region.current.name", value),
 					expr.Range(),
 				); err != nil {
 					return err

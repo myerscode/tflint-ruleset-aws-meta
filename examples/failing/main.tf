@@ -181,3 +181,26 @@ resource "aws_iam_role" "china_service_principal_bad" {
     }]
   })
 }
+
+# Module with hardcoded availability zones (will trigger aws_meta_hardcoded rule)
+module "vpc" {
+  source  = "./network"
+
+  subnets = {
+    public = {
+      availability_zones = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+      cidrs              = ["10.50.1.0/24", "10.50.2.0/24", "10.50.3.0/24"]
+    }
+    private = {
+      availability_zones = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+      cidrs              = ["10.50.4.0/24", "10.50.5.0/24", "10.50.6.0/24"]
+    }
+  }
+}
+
+# Resource with hardcoded availability zone (will trigger aws_meta_hardcoded rule)
+resource "aws_instance" "hardcoded_az" {
+  ami               = "ami-12345678"
+  instance_type     = "t3.micro"
+  availability_zone = "us-east-1a"
+}

@@ -148,6 +148,53 @@ resource "aws_s3_bucket" "test" {
 }`,
 			ExpectedCount: 0,
 		},
+		{
+			Name: "hardcoded availability zones in module block",
+			Content: `
+module "vpc" {
+  source  = "network"
+  version = "1.2.3"
+
+  subnets = {
+    public = {
+      availability_zones = ["eu-west-2a", "eu-west-2b", "eu-west-2c"]
+    }
+  }
+}`,
+			ExpectedCount: 6, // 3 AZs x 2 (WalkExpressions visits nested)
+		},
+		{
+			Name: "hardcoded availability zone in resource",
+			Content: `
+resource "aws_instance" "test" {
+  availability_zone = "us-east-1a"
+}`,
+			ExpectedCount: 2,
+		},
+		{
+			Name: "hardcoded region as standalone value",
+			Content: `
+resource "aws_instance" "test" {
+  provider = aws.us-east-1
+  tags = {
+    Region = "us-east-1"
+  }
+}`,
+			ExpectedCount: 2,
+		},
+		{
+			Name: "dynamic availability zones using data source",
+			Content: `
+data "aws_availability_zones" "available" {}
+
+module "vpc" {
+  source  = "network"
+  version = "1.2.3"
+
+  availability_zones = data.aws_availability_zones.available.names
+}`,
+			ExpectedCount: 0,
+		},
 	}
 
 	rule := NewAwsMetaHardcodedRule()
