@@ -90,8 +90,8 @@ github.com/mattn/go-runewidth v0.0.21 h1:jJKAZiQH+2mIinzCJIaIG9Be1+0NR+5sz/lYEEj
 github.com/mattn/go-runewidth v0.0.21/go.mod h1:XBkDxAl56ILZc9knddidhrOlY5R/pDhgLpndooCuJAs=
 github.com/mitchellh/go-wordwrap v1.0.1 h1:TLuKupo69TCn6TQSyGxwI1EblZZEsQ0vMlAFQflz0v0=
 github.com/mitchellh/go-wordwrap v1.0.1/go.mod h1:R62XHJLzvMFRBbcrT7m7WgmE1eOyTSsCt+hzestvNj0=
-github.com/myerscode/aws-meta v0.88.0 h1:ytg6AVULH4JXVoAHEFRjd8GZL8SfkOyq7PCltIcsZPo=
-github.com/myerscode/aws-meta v0.88.0/go.mod h1:ajuCHYCDt70DFexA0dDDna29vAFvmoTeB/+q1PfKlTY=
+github.com/myerscode/aws-meta v0.92.0 h1:HOHuLhXA44Oc/3G5iH4OYWB+52kDp5HaJjW026ALboA=
+github.com/myerscode/aws-meta v0.92.0/go.mod h1:ajuCHYCDt70DFexA0dDDna29vAFvmoTeB/+q1PfKlTY=
 github.com/oklog/run v1.2.0 h1:O8x3yXwah4A73hJdlrwo/2X6J62gE5qTMusH0dvz60E=
 github.com/oklog/run v1.2.0/go.mod h1:mgDbKRSwPhJfesJ4PntqFUbKQRZ50NgmZTSPlFA0YFk=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
