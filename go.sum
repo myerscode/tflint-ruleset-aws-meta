@@ -46,8 +46,8 @@ github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWE
 github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
 github.com/mitchellh/go-wordwrap v1.0.1 h1:TLuKupo69TCn6TQSyGxwI1EblZZEsQ0vMlAFQflz0v0=
 github.com/mitchellh/go-wordwrap v1.0.1/go.mod h1:R62XHJLzvMFRBbcrT7m7WgmE1eOyTSsCt+hzestvNj0=
-github.com/myerscode/aws-meta v0.103.0 h1:vbP4EZiEDVhm9dEGtwF8py2KXsCjfsqM6q34bzJh44E=
-github.com/myerscode/aws-meta v0.103.0/go.mod h1:bWFNlcQ3V5u1vG3NfIDAT3S5gcFQf1rSG0GL3wQ1NkY=
+github.com/myerscode/aws-meta v0.104.0 h1:tIqZ5NpRC2wLDik4hRDFmltxbbumSYXsh5/toTFqMW0=
+github.com/myerscode/aws-meta v0.104.0/go.mod h1:bWFNlcQ3V5u1vG3NfIDAT3S5gcFQf1rSG0GL3wQ1NkY=
 github.com/oklog/run v1.2.0 h1:O8x3yXwah4A73hJdlrwo/2X6J62gE5qTMusH0dvz60E=
 github.com/oklog/run v1.2.0/go.mod h1:mgDbKRSwPhJfesJ4PntqFUbKQRZ50NgmZTSPlFA0YFk=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
