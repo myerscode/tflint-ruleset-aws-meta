@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	github.com/hashicorp/hcl/v2 v2.25.0
-	github.com/myerscode/aws-meta v0.109.0
+	github.com/myerscode/aws-meta v0.110.0
 	github.com/terraform-linters/tflint-plugin-sdk v0.25.0
 )
 
